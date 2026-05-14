@@ -7,419 +7,418 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
         ::-webkit-scrollbar { display: none; }
-        .pb-safe { padding-bottom: 100px; }
-        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .pb-safe { padding-bottom: 110px; }
+        .tab-content { display: none; animation: fadeIn 0.2s ease-out; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .toggle-checkbox:checked { right: 0; border-color: #0d9488; }
-        .toggle-checkbox:checked + .toggle-label { background-color: #0d9488; }
-        .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-overlay { backdrop-filter: blur(8px); background-color: rgba(15, 23, 42, 0.6); }
+        .no-select { -webkit-user-select: none; user-select: none; pointer-events: none; }
+        
+        /* Modifikasi SweetAlert agar cocok dengan tema FOUNDERLAN */
+        div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm { background-color: #0d9488 !important; border-radius: 12px; font-family: 'Plus Jakarta Sans'; font-weight: bold; }
+        div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel { background-color: #f1f5f9 !important; color: #475569 !important; border-radius: 12px; font-family: 'Plus Jakarta Sans'; font-weight: bold; }
+        div:where(.swal2-container) div:where(.swal2-popup) { border-radius: 24px; font-family: 'Plus Jakarta Sans'; }
     </style>
 </head>
-<body class="max-w-md mx-auto min-h-screen relative flex flex-col">
+<body class="max-w-md mx-auto bg-white min-h-screen relative flex flex-col shadow-2xl">
 
-    <div id="login-screen" class="absolute inset-0 z-[100] bg-slate-50 flex flex-col justify-center px-6 min-h-screen">
-        <div class="bg-gradient-to-br from-teal-600 to-teal-800 p-8 rounded-[40px] shadow-2xl text-white relative overflow-hidden">
-            <div class="relative z-10 text-center mb-8">
-                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-md border border-white/30">
-                    <i class="fas fa-shield-alt text-3xl text-white"></i>
-                </div>
-                <h1 class="text-2xl font-extrabold tracking-tight">Portal Admin</h1>
-                <p class="text-[11px] text-teal-100 mt-1 opacity-90">Sistem Manajemen Infaq Bersama</p>
+    <div id="login-screen" class="flex-grow flex flex-col items-center justify-center px-8 bg-gradient-to-br from-teal-600 to-emerald-800 text-white">
+        <div class="w-24 h-24 bg-white/20 rounded-3xl backdrop-blur-md flex items-center justify-center mb-6 shadow-xl border border-white/30">
+            <i class="fas fa-user-shield text-4xl"></i>
+        </div>
+        <h1 class="text-2xl font-black mb-1">FOUNDERLAN</h1>
+        <p class="text-teal-100 text-xs font-bold uppercase tracking-widest mb-10">Admin Dashboard</p>
+        
+        <div class="w-full space-y-4">
+            <div class="relative">
+                <i class="fas fa-user absolute left-4 top-4 text-teal-200"></i>
+                <input type="text" id="user" placeholder="Username" class="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/20 transition-all font-bold">
             </div>
-            <form id="login-form" class="relative z-10 space-y-4" onsubmit="handleLogin(event)">
-                <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest opacity-80 ml-1">Username</label>
-                    <input type="text" id="username" required placeholder="Masukkan username..." class="w-full mt-1 px-4 py-3.5 bg-white/10 border border-white/20 rounded-2xl focus:ring-2 focus:ring-white outline-none text-sm font-medium placeholder-teal-200 transition-all">
-                </div>
-                <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest opacity-80 ml-1">Password</label>
-                    <input type="password" id="password" required placeholder="••••••••" class="w-full mt-1 px-4 py-3.5 bg-white/10 border border-white/20 rounded-2xl focus:ring-2 focus:ring-white outline-none text-sm font-medium placeholder-teal-200 transition-all">
-                </div>
-                <button type="submit" class="w-full bg-white text-teal-800 font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-all mt-4 text-sm">Masuk ke Dashboard</button>
-            </form>
-            <i class="fas fa-lock absolute -bottom-10 -right-10 text-9xl text-white opacity-5"></i>
+            <div class="relative">
+                <i class="fas fa-lock absolute left-4 top-4 text-teal-200"></i>
+                <input type="password" id="pass" placeholder="Password" class="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/20 transition-all font-bold">
+            </div>
+            <button onclick="prosesLogin()" id="btn-login" class="w-full bg-white text-teal-800 font-black py-4 rounded-2xl shadow-lg hover:bg-teal-50 transition-all transform active:scale-95 uppercase tracking-wider text-sm">Masuk Sistem</button>
         </div>
     </div>
 
-    <div id="dashboard-screen" class="hidden flex-col min-h-screen pb-safe">
-        <header class="bg-slate-800 text-white px-5 pt-8 pb-10 rounded-b-[35px] shadow-lg relative z-10">
-            <div class="flex justify-between items-center mb-2">
+    <div id="admin-screen" class="hidden flex-grow flex flex-col bg-slate-50">
+        <header class="bg-white px-5 py-4 flex justify-between items-center border-b border-slate-100 sticky top-0 z-30">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-teal-100">
+                    <i class="fas fa-crown"></i>
+                </div>
                 <div>
-                    <span id="badge-role" class="bg-teal-500/30 text-teal-300 text-[9px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">ROLE</span>
-                    <h1 class="text-xl font-extrabold tracking-tight mt-1">Dashboard Pengurus</h1>
+                    <h2 class="text-sm font-black text-slate-800 leading-none" id="display-name">Admin</h2>
+                    <span class="text-[10px] font-bold text-teal-600 uppercase tracking-tighter" id="display-role">Level</span>
                 </div>
             </div>
+            <button onclick="logout()" class="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all">
+                <i class="fas fa-power-off"></i>
+            </button>
         </header>
 
-        <main class="px-5 -mt-6 relative z-20 flex-grow">
-            <div id="tab-dashboard" class="tab-content active space-y-5">
-                <div class="bg-gradient-to-br from-teal-600 to-teal-800 p-6 rounded-3xl shadow-lg text-white relative overflow-hidden">
-                    <div class="relative z-10">
-                        <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest mb-1">Total Infaq Terkumpul</p>
-                        <h2 class="text-3xl font-black tracking-tighter">Rp 0</h2>
+        <main class="flex-grow px-5 pt-6 pb-safe overflow-y-auto">
+            <div id="tab-dashboard" class="tab-content active space-y-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Total Saldo</p>
+                        <h3 id="total-saldo-all" class="text-lg font-black text-slate-900 tracking-tight">Rp 0</h3>
                     </div>
-                    <i class="fas fa-wallet absolute -bottom-4 -right-4 text-8xl text-white opacity-10"></i>
+                    <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Donatur</p>
+                        <h3 id="total-donatur" class="text-lg font-black text-slate-900 tracking-tight">0 Org</h3>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="font-extrabold text-slate-800 text-sm mb-3 px-1">Rincian Per Program</h3>
-                    <div class="grid grid-cols-2 gap-3" id="grid-rincian-program"></div>
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <h4 class="text-xs font-black text-slate-800 uppercase mb-4 flex items-center gap-2">
+                        <i class="fas fa-history text-teal-500"></i> Log Sistem
+                    </h4>
+                    <div id="list-logs" class="space-y-4 max-h-60 overflow-y-auto pr-1"></div>
                 </div>
             </div>
 
             <div id="tab-program" class="tab-content space-y-4">
-                <button onclick="openAddModal()" class="w-full bg-teal-50 border border-teal-200 text-teal-700 font-bold py-3.5 rounded-2xl shadow-sm hover:bg-teal-100 transition flex items-center justify-center gap-2 text-sm">
-                    <i class="fas fa-plus-circle"></i> Tambah Program Baru
-                </button>
-                <div id="list-program-admin"></div>
-            </div>
-
-            <div id="tab-donatur" class="tab-content space-y-3">
-                <div class="flex justify-between items-center mb-2 px-1">
-                    <h3 class="font-extrabold text-slate-800 text-sm">Riwayat Masuk</h3>
-                    <span id="badge-total-donasi" class="text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-bold">Total: 0</span>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-black text-slate-800">Manajemen Program</h3>
+                    <button onclick="bukaModalProgram('tambah')" class="bg-teal-600 text-white text-[10px] font-black px-4 py-2 rounded-xl shadow-lg shadow-teal-100 uppercase tracking-wider">+ Program</button>
                 </div>
-                <div id="list-riwayat-donasi"></div>
+                <div id="list-program-admin" class="space-y-3"></div>
             </div>
 
-            <div id="tab-sistem" class="tab-content space-y-6">
-                <div>
-                    <h3 class="font-extrabold text-slate-800 text-sm mb-3 px-1"><i class="fas fa-history text-teal-600 mr-2"></i>Log Aktivitas Sistem</h3>
-                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-4 space-y-4" id="container-log"></div>
+            <div id="tab-donasi" class="tab-content space-y-4">
+                <h3 class="font-black text-slate-800 mb-2">Verifikasi Donasi</h3>
+                <div id="list-donasi-admin" class="space-y-3"></div>
+            </div>
+
+            <div id="tab-user" class="tab-content space-y-4">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-black text-slate-800">Manajemen Admin</h3>
+                    <button onclick="bukaModalUser()" class="bg-emerald-600 text-white text-[10px] font-black px-4 py-2 rounded-xl shadow-lg uppercase tracking-wider">+ Admin Baru</button>
                 </div>
+                <div id="list-user-admin" class="space-y-3"></div>
             </div>
 
-            <div id="tab-akun" class="tab-content space-y-4">
-                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 text-center">
-                    <i class="fas fa-user-circle text-4xl text-gray-300 mb-2"></i>
-                    <h3 class="font-bold text-gray-700">Akun Admin</h3>
-                    <p class="text-xs text-gray-500 mb-4">Anda sedang masuk sebagai admin biasa.</p>
+            <div id="tab-profil" class="tab-content space-y-6">
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 text-center">
+                    <div class="w-20 h-20 bg-teal-100 text-teal-600 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h3 id="prof-user" class="font-black text-slate-800 text-xl leading-none mb-1">Username</h3>
+                    <p id="prof-role" class="text-xs font-bold text-teal-600 uppercase">Role</p>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                    <h4 class="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                        <i class="fas fa-key text-amber-500"></i> Ubah Password
+                    </h4>
+                    <div class="space-y-4">
+                        <input type="password" id="pass-lama" placeholder="Password Sekarang" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        <input type="password" id="pass-baru" placeholder="Password Baru" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        <button onclick="prosesUbahPassword()" class="w-full bg-slate-900 text-white font-black py-4 rounded-2xl text-xs uppercase tracking-widest hover:bg-black transition-all">Simpan Perubahan</button>
+                    </div>
                 </div>
             </div>
         </main>
 
-        <nav class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-100 flex justify-around items-center pt-2 pb-5 px-2 z-50 rounded-t-[35px] shadow-[0_-15px_30px_-10px_rgba(0,0,0,0.08)]">
-            <button onclick="switchTab('dashboard', this)" class="admin-nav flex flex-col items-center p-2 text-teal-600 transition w-16">
-                <div class="bg-teal-50 p-2 rounded-2xl mb-1 icon-bg"><i class="fas fa-chart-pie text-lg"></i></div><span class="text-[10px] font-bold">Statistik</span>
+        <nav class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white/90 backdrop-blur-md border-t border-slate-100 flex justify-around items-center pt-3 pb-6 px-2 z-40 rounded-t-[35px] shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.1)]">
+            <button onclick="switchTab('dashboard', this)" class="admin-nav flex flex-col items-center gap-1 text-teal-600 transition w-14">
+                <div class="icon-bg bg-teal-50 p-2 rounded-2xl"><i class="fas fa-chart-bar text-lg"></i></div>
+                <span class="text-[9px] font-black uppercase">Home</span>
             </button>
-            <button onclick="switchTab('program', this)" class="admin-nav flex flex-col items-center p-2 text-gray-400 hover:text-teal-600 transition w-16">
-                <div class="p-2 mb-1 icon-bg"><i class="fas fa-layer-group text-lg"></i></div><span class="text-[10px] font-semibold">Program</span>
+            <button onclick="switchTab('program', this)" class="admin-nav flex flex-col items-center gap-1 text-slate-400 transition w-14">
+                <div class="icon-bg p-2"><i class="fas fa-tasks text-lg"></i></div>
+                <span class="text-[9px] font-bold uppercase">Program</span>
             </button>
-            <button onclick="switchTab('donatur', this)" class="admin-nav flex flex-col items-center p-2 text-gray-400 hover:text-teal-600 transition w-16">
-                <div class="p-2 mb-1 icon-bg"><i class="fas fa-users text-lg"></i></div><span class="text-[10px] font-semibold">Data</span>
+            <button onclick="switchTab('donasi', this)" class="admin-nav flex flex-col items-center gap-1 text-slate-400 transition w-14">
+                <div class="icon-bg p-2"><i class="fas fa-check-double text-lg"></i></div>
+                <span class="text-[9px] font-bold uppercase">Donasi</span>
             </button>
-            <button id="nav-dynamic" onclick="switchTab('sistem', this)" class="admin-nav flex flex-col items-center p-2 text-gray-400 hover:text-teal-600 transition w-16">
-                <div class="p-2 mb-1 icon-bg"><i id="icon-dynamic" class="fas fa-cogs text-lg"></i></div><span id="text-dynamic" class="text-[10px] font-semibold">Sistem</span>
+            <button id="nav-user" onclick="switchTab('user', this)" class="hidden admin-nav flex flex-col items-center gap-1 text-slate-400 transition w-14">
+                <div class="icon-bg p-2"><i class="fas fa-users-cog text-lg"></i></div>
+                <span class="text-[9px] font-bold uppercase">User</span>
             </button>
-            <button onclick="logout()" class="flex flex-col items-center p-2 text-red-400 hover:text-red-600 transition w-16">
-                <div class="p-2 mb-1"><i class="fas fa-sign-out-alt text-lg"></i></div><span class="text-[10px] font-semibold">Keluar</span>
+            <button onclick="switchTab('profil', this)" class="admin-nav flex flex-col items-center gap-1 text-slate-400 transition w-14">
+                <div class="icon-bg p-2"><i class="fas fa-user-circle text-lg"></i></div>
+                <span class="text-[9px] font-bold uppercase">Profil</span>
             </button>
         </nav>
     </div>
 
-    <div id="modal-program" class="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm hidden flex items-center justify-center px-4">
-        <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl overflow-hidden animate-fadeIn flex flex-col max-h-[90vh]">
-            <div class="bg-teal-700 p-5 text-white flex justify-between items-center flex-shrink-0">
-                <h3 id="modal-title" class="font-extrabold text-base">Tambah Program</h3>
-                <button onclick="closeModal('modal-program')" class="text-white/50 hover:text-white w-8 h-8 flex items-center justify-center rounded-full bg-white/10"><i class="fas fa-times"></i></button>
+    <div id="modal-program" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center px-4">
+        <div class="bg-white w-full max-w-sm rounded-[30px] p-6 shadow-2xl relative">
+            <h3 id="modal-prog-title" class="text-sm font-black text-slate-800 mb-4">Tambah Program</h3>
+            <div class="space-y-3">
+                <input type="hidden" id="prog-id"><input type="hidden" id="prog-mode"><input type="hidden" id="prog-foto-lama">
+                <input type="text" id="prog-nama" placeholder="Nama Program" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold">
+                <input type="text" id="prog-target" placeholder="Target Dana (Rp)" oninput="formatRupiahInput(this)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold">
+                <input type="text" id="prog-bank" placeholder="Nama Bank (mis: BSI)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold">
+                <input type="number" id="prog-norek" placeholder="Nomor Rekening" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold">
+                <input type="text" id="prog-atasnama" placeholder="Atas Nama Rekening" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold">
+                
+                <div class="border-2 border-dashed border-slate-200 rounded-xl p-3 text-center relative hover:bg-slate-50 transition">
+                    <input type="file" id="prog-foto" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*">
+                    <i class="fas fa-image text-slate-400 text-xl mb-1"></i>
+                    <p class="text-[10px] font-bold text-slate-500">Upload Poster Baru</p>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <button onclick="document.getElementById('modal-program').classList.add('hidden')" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl text-xs">Batal</button>
+                    <button onclick="simpanProgram()" id="btn-simpan-prog" class="flex-1 bg-teal-600 text-white font-bold py-3 rounded-xl text-xs shadow-lg">Simpan</button>
+                </div>
             </div>
-            <form id="form-program" class="p-5 space-y-4 overflow-y-auto flex-grow" onsubmit="simpanProgram(event)">
-                <input type="hidden" id="prog-mode" value="tambah"> <input type="hidden" id="prog-id"> <input type="hidden" id="prog-foto-lama">
-                <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nama Program</label>
-                    <input type="text" id="prog-nama" required class="w-full mt-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-bold outline-none focus:border-teal-500">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Target (Rp)</label>
-                    <input type="text" id="prog-target" onkeyup="formatRupiahInput(this)" required class="w-full mt-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-bold outline-none focus:border-teal-500"></div>
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Bank</label>
-                    <input type="text" id="prog-bank" required class="w-full mt-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-bold outline-none focus:border-teal-500"></div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">No. Rekening</label>
-                    <input type="text" id="prog-norek" required class="w-full mt-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-bold outline-none focus:border-teal-500"></div>
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Atas Nama</label>
-                    <input type="text" id="prog-atas-nama" required class="w-full mt-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-bold outline-none focus:border-teal-500"></div>
-                </div>
-                <div class="bg-slate-50 p-3 rounded-2xl border border-dashed border-slate-300">
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">Ganti Poster</label>
-                    <input type="file" id="prog-file" accept="image/*" class="w-full text-[10px]">
-                </div>
-                <button type="submit" id="btn-save-prog" class="w-full bg-teal-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-teal-600/20 active:scale-95 transition-all text-xs flex justify-center"><i class="fas fa-save mr-2 mt-0.5"></i> Simpan Program</button>
-            </form>
         </div>
     </div>
 
-    <div id="modal-donasi" class="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm hidden flex items-center justify-center px-4">
-        <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl overflow-hidden animate-fadeIn flex flex-col max-h-[90vh]">
-            <div class="bg-blue-600 p-5 text-white flex justify-between items-center flex-shrink-0">
-                <h3 class="font-extrabold text-base">Edit Data Donasi</h3>
-                <button onclick="closeModal('modal-donasi')" class="text-white/50 hover:text-white w-8 h-8 flex items-center justify-center rounded-full bg-white/10"><i class="fas fa-times"></i></button>
+    <div id="modal-donasi" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center px-4">
+        <div class="bg-white w-full max-w-sm rounded-[30px] p-6 shadow-2xl relative">
+            <h3 class="text-sm font-black text-slate-800 mb-4">Edit Data Donasi</h3>
+            <div class="space-y-3">
+                <input type="hidden" id="donasi-nama-lama"><input type="hidden" id="donasi-nominal-lama"><input type="hidden" id="donasi-program-lama">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 ml-1">Nama Donatur</label>
+                    <input type="text" id="donasi-nama-baru" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold mt-1">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 ml-1">Wilayah/Alamat</label>
+                    <input type="text" id="donasi-wilayah-baru" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold mt-1">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 ml-1">Nominal (Rp)</label>
+                    <input type="text" id="donasi-nominal-baru" oninput="formatRupiahInput(this)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold mt-1">
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <button onclick="document.getElementById('modal-donasi').classList.add('hidden')" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl text-xs">Batal</button>
+                    <button onclick="simpanEditDonasi()" id="btn-simpan-donasi" class="flex-1 bg-teal-600 text-white font-bold py-3 rounded-xl text-xs shadow-lg">Simpan</button>
+                </div>
             </div>
-            <form id="form-donasi" class="p-5 space-y-4 overflow-y-auto flex-grow" onsubmit="simpanEditDonasi(event)">
-                <input type="hidden" id="don-nama-lama">
-                <input type="hidden" id="don-nominal-lama">
-                <input type="hidden" id="don-program-lama">
-                
-                <div class="bg-blue-50 border border-blue-100 p-3 rounded-2xl flex items-center gap-3">
-                    <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center flex-shrink-0"><i class="fas fa-bullseye"></i></div>
-                    <div>
-                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Tujuan Program (Terkunci)</p>
-                        <h4 id="don-program-display" class="text-xs font-bold text-blue-900 mt-0.5">Memuat...</h4>
-                    </div>
-                </div>
+        </div>
+    </div>
 
-                <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nama Donatur</label>
-                    <input type="text" id="don-nama" required class="w-full mt-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-bold outline-none focus:border-blue-500">
+    <div id="modal-preview" class="fixed inset-0 z-[100] hidden flex items-center justify-center px-6">
+        <div class="modal-overlay absolute inset-0" onclick="tutupPreview()"></div>
+        <div class="bg-white w-full max-w-sm rounded-[40px] overflow-hidden shadow-2xl relative animate-[fadeIn_0.3s_ease-out]">
+            <div class="p-5 flex justify-between items-center border-b border-slate-100">
+                <h4 class="font-black text-slate-800 text-sm">Bukti Transfer</h4>
+                <button onclick="tutupPreview()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center"><i class="fas fa-times text-xs"></i></button>
+            </div>
+            <div class="p-4 bg-slate-50 relative group">
+                <div class="no-select flex justify-center items-center min-h-[300px]">
+                    <img id="img-preview" src="" class="max-w-full max-h-[70vh] rounded-2xl shadow-md border-4 border-white pointer-events-none" oncontextmenu="return false;" ondragstart="return false;">
                 </div>
-                <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Wilayah / Alamat</label>
-                    <input type="text" id="don-wilayah" required class="w-full mt-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-bold outline-none focus:border-blue-500">
+                <div class="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none select-none">
+                    <span class="text-4xl font-black rotate-45 text-slate-900 uppercase">FOUNDERLAN SECURE</span>
                 </div>
-                <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nominal (Rp)</label>
-                    <input type="text" id="don-nominal" onkeyup="formatRupiahInput(this)" required class="w-full mt-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-bold outline-none focus:border-blue-500">
-                </div>
-                <button type="submit" id="btn-save-don" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-blue-600/20 active:scale-95 transition-all text-xs mt-2 flex items-center justify-center">
-                    <i class="fas fa-check-circle mr-2 mt-0.5"></i> Terapkan Perubahan
-                </button>
-            </form>
+            </div>
+            <div class="p-4 text-center">
+                <p class="text-[10px] font-bold text-slate-400">Klik luar gambar untuk menutup</p>
+            </div>
         </div>
     </div>
 
     <script>
-        // MASUKKAN URL WEB APP KAMU DI SINI
+        // URL WEB APP TERBARU HARAP PASTIKAN DEPLOY BARU KALAU UDAH UBAH CODE.GS
         const scriptUrl = 'https://script.google.com/macros/s/AKfycbxlsnAeKUnicG1J_JHH576byKCejUtA5TqX3tAKWtoJz7Fw1VetPE8dpNjkrc8zqkJn/exec';
-        
-        let currentRole = ''; let currentUser = '';
+        let currentUser = null; let currentRole = null;
         const formatRupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
 
-        // HELPER AUTO FORMAT RUPIAH
-        function formatRupiahInput(input) {
-            let value = input.value.replace(/[^0-9]/g, '');
-            input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
+        function formatRupiahInput(input) { let value = input.value.replace(/[^0-9]/g, ''); input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+        function formatRupiahInputManual(angka) { return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
 
-        // HELPER UBAH ANGKA KE TEKS BERTITIK SAAT EDIT DATA
-        function formatRupiahToString(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-
-        // 1. SISTEM LOGIN
-        function handleLogin(event) {
-            event.preventDefault();
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            const btn = event.target.querySelector('button');
-            btn.innerText = "Memeriksa..."; btn.disabled = true;
-
-            fetch(scriptUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "login", user: user, pass: pass })
-            }).then(res => res.json()).then(res => {
+        // --- CORE LOGIN ---
+        function prosesLogin() {
+            const user = document.getElementById('user').value; const pass = document.getElementById('pass').value;
+            if(!user || !pass) return Swal.fire({ icon: 'warning', title: 'Oops...', text: 'Username & password wajib diisi!'});
+            
+            const btn = document.getElementById('btn-login'); btn.disabled = true; btn.innerText = "Mengecek Kredensial...";
+            
+            fetch(scriptUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "login", user: user, pass: pass }) })
+            .then(r => r.json()).then(res => {
                 if(res.status === 'success') {
                     currentUser = user; currentRole = res.role;
-                    document.getElementById('badge-role').innerText = currentRole.toUpperCase();
-                    const navBtn = document.getElementById('nav-dynamic');
-                    if(currentRole === 'superadmin') {
-                        navBtn.setAttribute('onclick', "switchTab('sistem', this)");
-                        document.getElementById('icon-dynamic').className = 'fas fa-cogs text-lg';
-                        document.getElementById('text-dynamic').innerText = 'Sistem';
-                    } else {
-                        navBtn.setAttribute('onclick', "switchTab('akun', this)");
-                        document.getElementById('icon-dynamic').className = 'fas fa-user-cog text-lg';
-                        document.getElementById('text-dynamic').innerText = 'Akun';
-                    }
-                    document.getElementById('login-screen').classList.add('hidden');
-                    document.getElementById('dashboard-screen').classList.remove('hidden');
-                    document.getElementById('dashboard-screen').classList.add('flex');
-                    memuatSemuaData(); 
-                } else { alert('Login gagal!'); btn.innerText = "Masuk ke Dashboard"; btn.disabled = false; }
+                    document.getElementById('login-screen').classList.add('hidden'); document.getElementById('admin-screen').classList.remove('hidden');
+                    document.getElementById('display-name').innerText = user; document.getElementById('display-role').innerText = res.role;
+                    document.getElementById('prof-user').innerText = user; document.getElementById('prof-role').innerText = res.role;
+                    if(res.role.toLowerCase() === 'superadmin') document.getElementById('nav-user').classList.remove('hidden');
+                    Swal.fire({ icon: 'success', title: 'Selamat Datang!', text: `Anda login sebagai ${res.role}`, timer: 1500, showConfirmButton: false });
+                    memuatSemuaData();
+                } else Swal.fire({ icon: 'error', title: 'Login Gagal', text: 'Kredensial tidak valid.'});
+            }).catch(() => Swal.fire({ icon: 'error', title: 'Koneksi Gagal', text: 'Cek koneksi internet / update web app URL.'})).finally(() => { btn.disabled = false; btn.innerText = "Masuk Sistem"; });
+        }
+
+        // --- MANAJEMEN DATA UTAMA ---
+        function memuatSemuaData() {
+            fetch(scriptUrl + "?action=getProgram").then(r => r.json()).then(data => {
+                document.getElementById('total-saldo-all').innerText = formatRupiah.format(data.reduce((sum, p) => sum + Number(p.terkumpul), 0));
+                document.getElementById('list-program-admin').innerHTML = data.map(p => `
+                    <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">
+                        <div class="w-16 h-16 bg-slate-100 rounded-2xl overflow-hidden shadow-inner flex-shrink-0"><img src="https://drive.google.com/thumbnail?id=${p.foto}&sz=w200" class="w-full h-full object-cover"></div>
+                        <div class="flex-grow">
+                            <h4 class="text-xs font-black text-slate-800 leading-tight mb-1">${p.nama}</h4>
+                            <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-teal-600">${formatRupiah.format(p.terkumpul)}</span>
+                                <div class="flex gap-2">
+                                    <button onclick="bukaModalProgram('edit', '${p.id}', '${p.nama}', '${p.target}', '${p.bank}', '${p.norek}', '${p.atas_nama}', '${p.foto}')" class="text-teal-400 p-1 hover:text-teal-600"><i class="fas fa-edit text-[10px]"></i></button>
+                                    <button onclick="hapusProgram('${p.nama}')" class="text-red-400 p-1 hover:text-red-600"><i class="fas fa-trash-alt text-[10px]"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            });
+
+            fetch(scriptUrl + "?action=getDonasi").then(r => r.json()).then(data => {
+                document.getElementById('total-donatur').innerText = data.length + " Org";
+                document.getElementById('list-donasi-admin').innerHTML = data.reverse().slice(0, 30).map(d => `
+                    <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm flex justify-between items-center">
+                        <div class="flex items-center gap-3"><div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-xs shadow-inner"><i class="fas fa-user"></i></div>
+                            <div><h4 class="text-xs font-black text-slate-800">${d.nama}</h4><p class="text-[9px] font-bold text-slate-400">${d.program}</p></div>
+                        </div>
+                        <div class="text-right flex items-center gap-2">
+                            <div class="mr-1"><p class="text-xs font-black text-teal-600">${formatRupiah.format(d.nominal)}</p><button onclick="bukaPreview('${d.struk}')" class="text-[9px] font-black text-amber-500 uppercase tracking-tighter underline">Cek Struk</button></div>
+                            <button onclick="bukaModalEditDonasi('${d.nama}', '${d.wilayah}', '${d.nominal}', '${d.program}')" class="text-blue-400 p-1.5 hover:text-blue-600"><i class="fas fa-edit"></i></button>
+                            <button onclick="hapusDonasi('${d.nama}', ${d.nominal})" class="text-red-300 p-1.5 hover:text-red-500"><i class="fas fa-times-circle"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+            });
+
+            fetch(scriptUrl + "?action=getLogs").then(r => r.json()).then(data => {
+                document.getElementById('list-logs').innerHTML = data.slice(0, 15).map(l => `<div class="border-l-2 border-teal-100 pl-3 py-1"><p class="text-[10px] font-bold text-slate-800 leading-tight">${l.aktivitas}</p><p class="text-[8px] font-bold text-slate-400 mt-0.5">${l.user} • ${new Date(l.waktu).toLocaleTimeString()}</p></div>`).join('');
+            });
+
+            if(currentRole.toLowerCase() === 'superadmin') loadAdminList();
+        }
+
+        // --- CRUD PROGRAM ---
+        function bukaModalProgram(mode, id='', nama='', target='', bank='', norek='', an='', fotoLama='') {
+            document.getElementById('prog-mode').value = mode; document.getElementById('prog-id').value = id; document.getElementById('prog-nama').value = nama; document.getElementById('prog-target').value = target ? formatRupiahInputManual(target) : ''; document.getElementById('prog-bank').value = bank; document.getElementById('prog-norek').value = norek; document.getElementById('prog-atasnama').value = an; document.getElementById('prog-foto-lama').value = fotoLama;
+            document.getElementById('modal-prog-title').innerText = mode === 'tambah' ? 'Tambah Program Baru' : 'Edit Program'; document.getElementById('modal-program').classList.remove('hidden');
+        }
+
+        function simpanProgram() {
+            const btn = document.getElementById('btn-simpan-prog'); const targetVal = document.getElementById('prog-target').value.replace(/\./g, '');
+            let payload = { action: "simpan_program", admin: currentUser, mode: document.getElementById('prog-mode').value, id_program: document.getElementById('prog-id').value, nama: document.getElementById('prog-nama').value, target: targetVal, bank: document.getElementById('prog-bank').value, norek: document.getElementById('prog-norek').value, atas_nama: document.getElementById('prog-atasnama').value, foto_lama: document.getElementById('prog-foto-lama').value };
+            if(!payload.nama || !payload.target) return Swal.fire('Error', 'Nama dan Target wajib diisi!', 'error');
+            btn.disabled = true; btn.innerText = "Menyimpan...";
+
+            const fileInput = document.getElementById('prog-foto');
+            if (fileInput.files.length > 0) {
+                const reader = new FileReader(); reader.onload = function(e) { payload.file_base64 = e.target.result; payload.mime_type = fileInput.files[0].type; kirimDataProgram(payload, btn); }; reader.readAsDataURL(fileInput.files[0]);
+            } else kirimDataProgram(payload, btn);
+        }
+
+        function kirimDataProgram(payload, btn) {
+            fetch(scriptUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
+            .then(r => r.json()).then(res => { if(res.status === 'success') { document.getElementById('modal-program').classList.add('hidden'); Swal.fire('Tersimpan', 'Data program berhasil disimpan.', 'success'); memuatSemuaData(); } else Swal.fire('Error', 'Gagal menyimpan program.', 'error'); }).finally(() => { btn.disabled = false; btn.innerText = "Simpan"; });
+        }
+
+        function hapusProgram(n) { 
+            Swal.fire({ title: 'Hapus Program?', text: `Yakin menghapus program ${n}?`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#cbd5e1', confirmButtonText: 'Ya, Hapus!' })
+            .then((result) => { if (result.isConfirmed) { fetch(scriptUrl, { method:"POST", body: JSON.stringify({action:"hapus_program", nama_program:n, admin:currentUser}) }).then(()=>{ Swal.fire('Terhapus!', 'Program telah dihapus.', 'success'); memuatSemuaData(); }); } });
+        }
+        
+        // --- FITUR EDIT & HAPUS DONASI ---
+        function bukaModalEditDonasi(nama, wilayah, nominal, program) {
+            document.getElementById('donasi-nama-lama').value = nama; document.getElementById('donasi-nominal-lama').value = nominal; document.getElementById('donasi-program-lama').value = program; document.getElementById('donasi-nama-baru').value = nama; document.getElementById('donasi-wilayah-baru').value = wilayah; document.getElementById('donasi-nominal-baru').value = formatRupiahInputManual(nominal); document.getElementById('modal-donasi').classList.remove('hidden');
+        }
+
+        function simpanEditDonasi() {
+            const btn = document.getElementById('btn-simpan-donasi'); const nominalBaruVal = document.getElementById('donasi-nominal-baru').value.replace(/\./g, '');
+            let payload = { action: "edit_donasi", admin: currentUser, nama_lama: document.getElementById('donasi-nama-lama').value, nominal_lama: document.getElementById('donasi-nominal-lama').value, program_lama: document.getElementById('donasi-program-lama').value, nama_baru: document.getElementById('donasi-nama-baru').value, wilayah_baru: document.getElementById('donasi-wilayah-baru').value, nominal_baru: nominalBaruVal };
+            if(!payload.nama_baru || !payload.nominal_baru) return Swal.fire('Error', 'Semua form wajib diisi!', 'error');
+            btn.disabled = true; btn.innerText = "Menyimpan...";
+
+            fetch(scriptUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
+            .then(r => r.json()).then(res => { if(res.status === 'success') { document.getElementById('modal-donasi').classList.add('hidden'); Swal.fire('Tersimpan!', 'Donasi berhasil diedit.', 'success'); memuatSemuaData(); } else Swal.fire('Error', 'Gagal menyimpan.', 'error'); }).finally(() => { btn.disabled = false; btn.innerText = "Simpan"; });
+        }
+
+        function hapusDonasi(n, m) { 
+            Swal.fire({ title: 'Hapus Donasi?', text: "Saldo program akan otomatis dikurangi.", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#cbd5e1', confirmButtonText: 'Ya, Hapus!' })
+            .then((result) => { if (result.isConfirmed) { fetch(scriptUrl, { method:"POST", body: JSON.stringify({action:"hapus_donasi", nama:n, nominal:m, admin:currentUser}) }).then(()=>{ Swal.fire('Terhapus!', 'Data donasi dihapus.', 'success'); memuatSemuaData(); }); } });
+        }
+
+        // --- FITUR PREVIEW PREMIUM ---
+        function bukaPreview(url) { let driveId = url.includes('id=') ? url.split('id=')[1] : url; document.getElementById('img-preview').src = `https://drive.google.com/thumbnail?id=${driveId}&sz=w1000`; document.getElementById('modal-preview').classList.remove('hidden'); }
+        function tutupPreview() { document.getElementById('modal-preview').classList.add('hidden'); }
+
+        // --- FITUR UBAH PASSWORD DIRI SENDIRI ---
+        function prosesUbahPassword() {
+            const pLama = document.getElementById('pass-lama').value; const pBaru = document.getElementById('pass-baru').value;
+            if(!pLama || !pBaru) return Swal.fire('Oops!', 'Isi kolom password!', 'warning');
+            Swal.fire({ title: 'Ganti Password?', text: "Anda akan diminta login ulang.", icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya, Ubah!' }).then((res) => {
+                if(res.isConfirmed) {
+                    fetch(scriptUrl, { method: "POST", body: JSON.stringify({ action: "ubah_password", user: currentUser, passLama: pLama, passBaru: pBaru }) })
+                    .then(r => r.json()).then(r => { if(r.status === 'success') { Swal.fire('Sukses!', 'Silakan login kembali.', 'success').then(()=>logout()); } else Swal.fire('Error', r.message, 'error'); });
+                }
             });
         }
 
-        // 2. LOAD SEMUA DATA
-        function memuatSemuaData() {
-            // LOAD PROGRAM
-            fetch(`${scriptUrl}?action=getProgram`).then(res => res.json()).then(dataProgram => {
-                const gridRincian = document.getElementById('grid-rincian-program'); gridRincian.innerHTML = ''; 
-                const listProgram = document.getElementById('list-program-admin'); listProgram.innerHTML = ''; 
-                const colors = ['teal', 'blue', 'amber', 'purple'];
-                
-                dataProgram.forEach((p, index) => {
-                    let col = colors[index % colors.length];
-                    gridRincian.innerHTML += `<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-${col}-500"><p class="text-[10px] text-gray-500 font-bold mb-1 line-clamp-1">${p.nama}</p><h4 class="text-sm font-black text-slate-800">${formatRupiah.format(p.terkumpul)}</h4></div>`;
-                    let isChecked = p.status === 'Aktif' ? 'checked' : '';
-                    let opacity = p.status === 'Aktif' ? 'opacity-100' : 'opacity-60 grayscale-[50%]';
-                    let btnHapus = currentRole === 'superadmin' ? `<button onclick="hapusProgram('${p.nama}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-[9px] font-bold"><i class="fas fa-trash"></i> Hapus</button>` : '';
-
-                    listProgram.innerHTML += `
-                        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-4 flex items-center gap-4 ${opacity} mb-3 transition-all duration-300">
-                            <div class="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-slate-200">
-                                <img src="https://lh3.googleusercontent.com/d/$${p.foto}" onerror="this.src='https://drive.google.com/thumbnail?id=${p.foto}&sz=w500'" class="w-full h-full object-cover">
-                            </div>
-                            <div class="flex-grow">
-                                <h4 class="text-xs font-bold text-slate-800 line-clamp-1 mb-1">${p.nama}</h4>
-                                <div class="flex gap-2 mt-2">
-                                    <button onclick="openEditModal('${p.id}', '${p.nama}', ${p.target}, '${p.bank}', '${p.norek}', '${p.atas_nama}', '${p.foto}')" class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg text-[9px] font-bold"><i class="fas fa-edit"></i> Edit</button>
-                                    ${btnHapus}
-                                </div>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" ${isChecked} class="sr-only peer" onchange="toggleStatus('${p.nama}', this.checked)">
-                                    <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-teal-600"></div>
-                                </label>
-                            </div>
-                        </div>`;
-                });
+        // --- MANAJEMEN USER (SUPERADMIN) ---
+        function loadAdminList() {
+            fetch(scriptUrl + "?action=getAdmins").then(r => r.json()).then(data => {
+                document.getElementById('list-user-admin').innerHTML = data.map(u => `
+                    <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm flex justify-between items-center">
+                        <div class="flex items-center gap-3"><div class="w-10 h-10 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center"><i class="fas fa-id-badge"></i></div>
+                            <div><h4 class="text-xs font-black text-slate-800">${u.username}</h4><span class="text-[9px] font-bold text-teal-600 uppercase tracking-widest">${u.role}</span></div>
+                        </div>
+                        ${u.username !== currentUser ? `
+                        <div class="flex gap-2">
+                            <button onclick="resetPasswordUser('${u.username}')" class="text-amber-400 p-2 hover:text-amber-600"><i class="fas fa-key"></i></button>
+                            <button onclick="hapusUser('${u.username}')" class="text-red-400 p-2 hover:text-red-600"><i class="fas fa-trash-alt"></i></button>
+                        </div>` : ''}
+                    </div>
+                `).join('');
             });
+        }
 
-            // LOAD DONASI
-            fetch(`${scriptUrl}?action=getDonasi`).then(res => res.json()).then(dataDonasi => {
-                const totalUang = dataDonasi.reduce((sum, d) => sum + Number(d.nominal), 0);
-                document.querySelector('#tab-dashboard h2.text-3xl').innerText = formatRupiah.format(totalUang);
-                document.getElementById('badge-total-donasi').innerText = 'Total: ' + dataDonasi.length;
-                const listDonatur = document.getElementById('list-riwayat-donasi'); listDonatur.innerHTML = ''; 
-                
-                [...dataDonasi].reverse().forEach(d => {
-                    listDonatur.innerHTML += `
-                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between mb-3">
-                            <div class="flex items-center gap-3">
-                                <a href="${d.struk}" target="_blank" class="w-10 h-10 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center flex-shrink-0"><i class="fas fa-receipt"></i></a>
-                                <div>
-                                    <h4 class="text-xs font-bold text-slate-800">${d.nama}</h4>
-                                    <p class="text-[9px] text-gray-500 line-clamp-1">${d.program} • ${d.wilayah}</p>
-                                    <p class="text-[11px] font-black text-teal-600 mt-0.5">${formatRupiah.format(d.nominal)}</p>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-1.5 flex-shrink-0">
-                                <button onclick="openEditDonasi('${d.nama}', '${d.wilayah}', ${d.nominal}, '${d.program}')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 w-8 h-8 rounded-lg transition"><i class="fas fa-pen text-xs"></i></button>
-                                <button onclick="hapusDonasi('${d.nama}', ${d.nominal})" class="bg-red-50 hover:bg-red-100 text-red-600 w-8 h-8 rounded-lg transition"><i class="fas fa-trash text-xs"></i></button>
-                            </div>
-                        </div>`;
-                });
+        // POP-UP ESTETIK UNTUK TAMBAH ADMIN
+        async function bukaModalUser() {
+            const { value: formValues } = await Swal.fire({
+                title: 'Tambah Admin Baru',
+                html:
+                    '<input id="swal-user" class="swal2-input text-sm rounded-xl" placeholder="Username">' +
+                    '<input id="swal-pass" class="swal2-input text-sm rounded-xl" type="password" placeholder="Password">' +
+                    '<select id="swal-role" class="swal2-input text-sm rounded-xl"><option value="Admin">Admin</option><option value="Superadmin">Superadmin</option></select>',
+                focusConfirm: false, showCancelButton: true, confirmButtonText: 'Simpan',
+                preConfirm: () => { return [ document.getElementById('swal-user').value, document.getElementById('swal-pass').value, document.getElementById('swal-role').value ] }
             });
-
-            // LOAD LOG
-            if(currentRole === 'superadmin') {
-                fetch(`${scriptUrl}?action=getLogs`).then(res => res.json()).then(dataLog => {
-                    const containerLog = document.getElementById('container-log');
-                    if(containerLog) {
-                        containerLog.innerHTML = '';
-                        dataLog.slice(0, 15).forEach(l => {
-                            const dt = new Date(l.waktu).toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-                            containerLog.innerHTML += `<div class="flex gap-3 items-start mb-4 border-b border-gray-50 pb-3"><div class="w-7 h-7 bg-slate-100 text-slate-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fas fa-info text-[9px]"></i></div><div><p class="text-[11px] text-gray-700 leading-snug"><b>${l.user}</b> ${l.aktivitas}</p><span class="text-[9px] text-gray-400 mt-0.5 block">${dt}</span></div></div>`;
-                        });
-                    }
-                });
+            if (formValues) {
+                const [userBaru, passBaru, roleBaru] = formValues;
+                if(!userBaru || !passBaru) return Swal.fire('Error', 'Data belum lengkap!', 'error');
+                fetch(scriptUrl, { method: "POST", body: JSON.stringify({ action: "tambah_admin", admin: currentUser, userBaru: userBaru, passBaru: passBaru, roleBaru: roleBaru }) })
+                .then(r => r.json()).then(res => { if(res.status === 'success') { Swal.fire('Berhasil!', 'Admin ditambahkan.', 'success'); loadAdminList(); } else Swal.fire('Error', res.message, 'error'); });
             }
         }
 
-        // 3. FUNGSI EDIT DATA DONASI
-        function openEditDonasi(nama, wilayah, nominal, programLama) {
-            document.getElementById('don-nama-lama').value = nama;
-            document.getElementById('don-nominal-lama').value = nominal;
-            document.getElementById('don-program-lama').value = programLama;
-            
-            document.getElementById('don-program-display').innerText = programLama;
-            document.getElementById('don-nama').value = nama;
-            document.getElementById('don-wilayah').value = wilayah;
-            
-            // Format nominal ke text bertitik saat dimuat
-            document.getElementById('don-nominal').value = formatRupiahToString(nominal);
-
-            document.getElementById('modal-donasi').classList.remove('hidden');
-        }
-
-        function simpanEditDonasi(event) {
-            event.preventDefault();
-            const btn = document.getElementById('btn-save-don');
-            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Menyimpan...`; btn.disabled = true;
-
-            const payload = {
-                action: "edit_donasi",
-                admin: currentUser,
-                nama_lama: document.getElementById('don-nama-lama').value,
-                nominal_lama: document.getElementById('don-nominal-lama').value,
-                program_lama: document.getElementById('don-program-lama').value,
-                nama_baru: document.getElementById('don-nama').value,
-                wilayah_baru: document.getElementById('don-wilayah').value,
-                // Hapus titik sebelum dikirim ke database
-                nominal_baru: document.getElementById('don-nominal').value.replace(/\./g, '')
-            };
-
-            fetch(scriptUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload)
-            }).then(res => res.json()).then(res => {
-                if(res.status === 'success') {
-                    alert('Data donasi berhasil diperbarui!');
-                    closeModal('modal-donasi'); memuatSemuaData();
-                } else { alert("Gagal menyimpan data donasi."); }
-                btn.innerHTML = `<i class="fas fa-check-circle mr-2"></i> Terapkan Perubahan`; btn.disabled = false;
+        // FITUR BARU: RESET PASSWORD ADMIN
+        async function resetPasswordUser(username) {
+            const { value: passBaru } = await Swal.fire({
+                title: `Reset Password`,
+                text: `Masukkan password baru untuk ${username}`,
+                input: 'text', inputPlaceholder: 'Ketik password baru...',
+                showCancelButton: true, confirmButtonText: 'Ganti Password'
             });
+            if (passBaru) {
+                fetch(scriptUrl, { method: "POST", body: JSON.stringify({ action: "reset_password_admin", admin: currentUser, targetUser: username, passBaru: passBaru }) })
+                .then(r => r.json()).then(res => { if(res.status === 'success') { Swal.fire('Sukses!', `Password ${username} berhasil diubah.`, 'success'); loadAdminList(); } else Swal.fire('Error', res.message, 'error'); });
+            }
         }
 
-        // FUNGSI UMUM MODAL
-        function closeModal(idModal) { document.getElementById(idModal).classList.add('hidden'); }
-        function openAddModal() { document.getElementById('modal-title').innerText = "Tambah Program Baru"; document.getElementById('prog-mode').value = "tambah"; document.getElementById('form-program').reset(); document.getElementById('modal-program').classList.remove('hidden'); }
-        
-        function openEditModal(id, nama, target, bank, norek, an, foto) { 
-            document.getElementById('modal-title').innerText = "Edit Program"; 
-            document.getElementById('prog-mode').value = "edit"; 
-            document.getElementById('prog-id').value = id; 
-            document.getElementById('prog-nama').value = nama; 
-            
-            // Format nominal ke text bertitik saat dimuat
-            document.getElementById('prog-target').value = formatRupiahToString(target); 
-            
-            document.getElementById('prog-bank').value = bank; 
-            document.getElementById('prog-norek').value = norek; 
-            document.getElementById('prog-atas-nama').value = an; 
-            document.getElementById('prog-foto-lama').value = foto; 
-            document.getElementById('modal-program').classList.remove('hidden'); 
+        function hapusUser(username) {
+            Swal.fire({ title: 'Hapus Akses?', text: `Cabut akses untuk ${username}?`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Ya, Hapus!' })
+            .then((result) => { if (result.isConfirmed) { fetch(scriptUrl, { method: "POST", body: JSON.stringify({ action: "hapus_admin", admin: currentUser, userHapus: username }) }).then(() => { Swal.fire('Terhapus!', 'User telah dihapus.', 'success'); loadAdminList(); }); } });
         }
 
-        // CRUD PROGRAM
-        function simpanProgram(event) {
-            event.preventDefault(); const btn = document.getElementById('btn-save-prog'); btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Memproses...`; btn.disabled = true;
-            const fileInput = document.getElementById('prog-file'); const mode = document.getElementById('prog-mode').value;
-            const sendData = (base64 = null, mime = null) => {
-                fetch(scriptUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, 
-                    body: JSON.stringify({ 
-                        action: "simpan_program", 
-                        mode: mode, 
-                        admin: currentUser, 
-                        id_program: document.getElementById('prog-id').value, 
-                        nama: document.getElementById('prog-nama').value, 
-                        // Hapus titik sebelum dikirim ke database
-                        target: document.getElementById('prog-target').value.replace(/\./g, ''), 
-                        bank: document.getElementById('prog-bank').value, 
-                        norek: document.getElementById('prog-norek').value, 
-                        atas_nama: document.getElementById('prog-atas-nama').value, 
-                        foto_lama: document.getElementById('prog-foto-lama').value, 
-                        file_base64: base64, mime_type: mime 
-                    })
-                }).then(res => res.json()).then(res => {
-                    if(res.status === 'success') { alert('Data program tersimpan.'); closeModal('modal-program'); memuatSemuaData(); }
-                    btn.innerHTML = `<i class="fas fa-save"></i> Simpan Program`; btn.disabled = false;
-                });
-            };
-            if (fileInput.files[0]) { const reader = new FileReader(); reader.readAsDataURL(fileInput.files[0]); reader.onload = (e) => sendData(e.target.result, fileInput.files[0].type); } else { sendData(); }
-        }
-
-        function toggleStatus(namaProgram, isAktif) { fetch(scriptUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "update_status_program", nama_program: namaProgram, status: isAktif ? 'Aktif' : 'Nonaktif', admin: currentUser }) }).then(() => memuatSemuaData()); }
-        function hapusProgram(namaProgram) { if(confirm(`Hapus program "${namaProgram}" secara permanen?`)) { fetch(scriptUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "hapus_program", nama_program: namaProgram, admin: currentUser }) }).then(() => memuatSemuaData()); } }
-        function hapusDonasi(nama, nominal) { if(confirm(`Hapus donasi dari ${nama} sebesar ${formatRupiah.format(nominal)}? (Saldo program akan dikurangi)`)) { fetch(scriptUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "hapus_donasi", nama: nama, nominal: nominal, admin: currentUser }) }).then(() => memuatSemuaData()); } }
-
-        // NAVIGASI
-        function logout() { location.reload(); }
         function switchTab(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); document.getElementById('tab-' + tabId).classList.add('active');
-            document.querySelectorAll('.admin-nav').forEach(n => { n.classList.remove('text-teal-600'); n.classList.add('text-gray-400'); n.querySelector('span').classList.remove('font-bold'); n.querySelector('span').classList.add('font-semibold'); n.querySelector('.icon-bg').classList.remove('bg-teal-50', 'rounded-2xl'); });
-            element.classList.remove('text-gray-400'); element.classList.add('text-teal-600'); element.querySelector('span').classList.remove('font-semibold'); element.querySelector('span').classList.add('font-bold'); element.querySelector('.icon-bg').classList.add('bg-teal-50', 'rounded-2xl');
+            document.querySelectorAll('.admin-nav').forEach(n => { n.classList.remove('text-teal-600'); n.classList.add('text-slate-400'); n.querySelector('span').classList.replace('font-black', 'font-bold'); n.querySelector('.icon-bg').classList.remove('bg-teal-50'); });
+            element.classList.replace('text-slate-400', 'text-teal-600'); element.querySelector('span').classList.replace('font-bold', 'font-black'); element.querySelector('.icon-bg').classList.add('bg-teal-50');
         }
+        function logout() { location.reload(); }
     </script>
 </body>
 </html>
